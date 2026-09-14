@@ -1,112 +1,231 @@
-# Sreeram Reddy Katanguri — Portfolio (React)
+# Sreeram Reddy Katanguri — Full Stack Portfolio (React + Node.js/Express)
 
-A React conversion of the Assignment 1 static portfolio: reusable components,
-props, `useState`/`useEffect`, and client-side routing with
-`react-router-dom`. No third-party state libraries — just Hooks and prop
-passing, per the assignment constraints.
+A full-stack portfolio website featuring a React frontend connected to a live Node.js/Express REST API backend. The backend serves project data, handles contact form submissions with validation, and stores submissions server-side in JSON storage using a modularized MVC directory structure (`app.js`, `routes/`, `controllers/`).
 
-## Setup & run
+---
 
+## 🚀 How to Run the Application
+
+The application consists of two parts: the Express backend server (`/server`) and the React frontend client.
+
+### 1. Start the Backend Server
+```bash
+cd server
+npm install
+npm start          # Or npm run dev for hot-reloading with nodemon
+```
+The server will run on `http://localhost:5000` (or the port defined in `server/.env`).
+
+### 2. Start the React Frontend
+In a separate terminal (from the project root directory):
 ```bash
 npm install
-npm run dev       # local dev server (Vite)
-npm run build     # production build -> dist/
-npm run preview   # preview the production build locally
+npm run dev
+```
+The frontend will run on `http://localhost:5173`.
+
+---
+
+## 🛠️ Environment Configuration
+
+The backend reads configuration from `server/.env`. A template is provided in `server/.env.example`:
+
+```env
+PORT=5000
+ALLOWED_ORIGIN=http://localhost:5173
 ```
 
-Requires Node.js 18+. No environment variables or backend are needed for
-this assignment — the contact form is client-side only for now.
+- **`PORT`**: Port on which the Express backend runs.
+- **`ALLOWED_ORIGIN`**: The allowed origin configured for CORS requests from the React dev server.
 
-## Component tree
+---
 
+## 📡 REST API Documentation
+
+Base URL: `http://localhost:5000`
+
+| Method | Endpoint | Description | Status Code |
+|---|---|---|---|
+| `GET` | `/` | Health check confirmation | `200 OK` |
+| `GET` | `/api/projects` | Fetch all project items | `200 OK` |
+| `GET` | `/api/projects/:id` | Fetch details for single project by ID | `200 OK` / `404 Not Found` |
+| `POST` | `/api/contact` | Submit contact form message | `201 Created` / `400 Bad Request` |
+| `GET` | `/api/contact` | List all contact form submissions *(Open endpoint for verification)* | `200 OK` |
+
+> [!NOTE]
+> `GET /api/contact` is an open endpoint intentionally unauthenticated for evaluator verification as specified in assignment requirements.
+
+---
+
+## 🧪 Testing Endpoints (curl Commands)
+
+### B1. Health Check
+```bash
+curl -i http://localhost:5000/
 ```
-main.jsx
-└─ BrowserRouter
-   └─ ThemeProvider                      (Context: theme + toggleTheme)
-      └─ App                             (Routes)
-         └─ Layout                       (Navbar + <Outlet/> + Footer, shared across routes)
-            ├─ Navbar                    (NavLink nav, mobile toggle, theme toggle button)
-            ├─ <Outlet/>  →  one of:
-            │   ├─ Home                  (loading-sequence effect, hero content)
-            │   ├─ About                 (education timeline + Skills + achievements)
-            │   │   └─ Skills            (receives `groups` via props)
-            │   ├─ Projects               (imports projects.js)
-            │   │   └─ ProjectList        (receives `projects`, drills a single project down)
-            │   │       └─ ProjectCard    (receives one project's fields via props; grandchild)
-            │   ├─ ProjectDetail          (useParams -> looks up project by :projectId)
-            │   ├─ Contact
-            │   │   └─ ContactForm        (controlled inputs, validation, local submit state)
-            │   └─ NotFound               (catch-all "*" route)
-            └─ Footer
-```
-
-### Prop drilling (2 levels)
-
-`Projects` (page) owns the imported `projects` array and passes the whole
-array to `ProjectList` (child). `ProjectList` then passes a single project's
-fields (`title`, `description`, `stack`, `image`, etc.) further down to each
-`ProjectCard` (grandchild). `ProjectCard` itself never imports the data file
-— everything it renders arrives via props, which is what makes it reusable
-on both the Projects page and (in spirit) the detail page.
-
-### State-lifting decisions
-
-- **Theme (light/dark):** lifted all the way to a `ThemeProvider` wrapping
-  the whole app (via React Context, one of the two options the assignment
-  allows). It's read by `Navbar` for the toggle button and applied globally
-  by setting `data-theme` on `<html>`, so any component's CSS can react to
-  it without prop-drilling a theme value through every layout.
-- **Contact form state:** kept local to `ContactForm` (`formData`, `touched`,
-  `submitted`). Nothing outside the form needs it, so lifting it further up
-  would only add unnecessary re-renders elsewhere.
-- **"View details" toggle:** kept local to each `ProjectCard` instance
-  (`useState` inside the component). This was a deliberate test of scoping —
-  expanding one card's details never affects any other card, because each
-  card has its own independent piece of state rather than a shared one.
-- **Mobile nav open/close:** kept local to `Navbar`, since no other
-  component needs to know whether the mobile menu is open.
-
-## `useEffect` hooks implemented
-
-| Where | Dependency array | Why |
-|---|---|---|
-| `Home.jsx` | `[]` (mount only) | Simulates a ~1s loading sequence with `setTimeout` before showing the hero content, per the "loading state on mount" requirement. Cleans up the timer on unmount so it can't call `setState` after the component is gone. |
-| `ThemeContext.jsx` | `[theme]` | Persists the current theme to `localStorage` and applies it to `<html data-theme="...">` every time `theme` changes; the saved value is read back via a lazy `useState` initializer on first load. |
-| `Navbar.jsx` | `[]` (mount only) | Adds a `window.resize` listener that auto-closes the mobile nav menu once the viewport grows past the tablet breakpoint, so the menu can't get stuck open after a resize. Since this is a subscription, it returns a cleanup function that removes the listener on unmount. |
-
-All effects that set up a timer or event listener return a cleanup
-function, as required.
-
-## Routing
-
-- `/` redirects to `/home`.
-- `/home`, `/about`, `/projects`, `/contact` are static routes.
-- `/projects/:projectId` is a dynamic route read with `useParams()`; if the
-  id doesn't match any project in `src/data/projects.js`, it shows an
-  inline "not found" message with a link back to `/projects` instead of
-  crashing.
-- `path="*"` catches anything else and renders the `NotFound` page with a
-  link back to `/home`.
-- All internal navigation uses `<Link>` / `<NavLink>` — no `<a href>` — so
-  routing never triggers a full page reload.
-
-## Folder structure
-
-```
-src/
-  components/   Navbar, Footer, Layout, ProjectCard, ProjectList, Skills, ContactForm
-  pages/        Home, About, Projects, ProjectDetail, Contact, NotFound
-  data/         projects.js, skills.js
-  context/      ThemeContext.jsx
-  styles/       global.css (design tokens + light/dark theme variables)
-  assets/       (reserved for future static assets)
-public/
-  images/projects/  studynotion.png, ecomzy.png, razorpay.png
+**Sample Response (HTTP 200):**
+```json
+{
+  "status": "ok"
+}
 ```
 
-## Known limitations
+---
 
-- The contact form validates and confirms locally — there's no backend yet,
-  since that's introduced in a later assignment.
-- Project "Source code" links point to the GitHub profile rather than
-  per-repo URLs, since individual repo links weren't provided.
+### B2. Get All Projects
+```bash
+curl -i http://localhost:5000/api/projects
+```
+**Sample Response (HTTP 200):**
+```json
+[
+  {
+    "id": "studynotion",
+    "title": "StudyNotion",
+    "period": "Jan – Feb 2026",
+    "description": "A full-stack ed-tech platform with RESTful APIs...",
+    "longDescription": "StudyNotion is a full-stack ed-tech platform built to explore end-to-end product ownership...",
+    "stack": ["React.js", "Node.js", "Express.js", "MongoDB", "Redux", "Cloudinary", "Razorpay", "JWT"],
+    "image": "/images/projects/studynotion.png",
+    "imageAlt": "StudyNotion homepage hero section...",
+    "github": "https://github.com/sreeramkatanguri21",
+    "highlights": [
+      "JWT authentication with OTP verification and password reset",
+      "Role-based access control with separate student/instructor dashboards"
+    ]
+  }
+]
+```
+
+---
+
+### B3. Get Single Project (Valid ID)
+```bash
+curl -i http://localhost:5000/api/projects/studynotion
+```
+**Sample Response (HTTP 200):** Returns project object.
+
+### B3. Get Single Project (Failure Case - Invalid ID)
+```bash
+curl -i http://localhost:5000/api/projects/non-existent-id
+```
+**Sample Response (HTTP 404):**
+```json
+{
+  "error": "Project not found"
+}
+```
+
+---
+
+### B4. Submit Contact Form (Valid Submission)
+```bash
+curl -i -X POST http://localhost:5000/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Alice Johnson", "email": "alice@example.com", "subject": "Job Offer", "message": "Hi Sreeram, let us connect!"}'
+```
+**Sample Response (HTTP 201):**
+```json
+{
+  "message": "Contact submission received successfully.",
+  "submission": {
+    "id": "1742045000000",
+    "name": "Alice Johnson",
+    "email": "alice@example.com",
+    "subject": "Job Offer",
+    "message": "Hi Sreeram, let us connect!",
+    "submittedAt": "2026-09-14T13:20:00.000Z"
+  }
+}
+```
+
+### B4. Submit Contact Form (Failure Case - Missing "@" in Email)
+```bash
+curl -i -X POST http://localhost:5000/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Alice Johnson", "email": "invalidemailformat", "message": "Hello"}'
+```
+**Sample Response (HTTP 400):**
+```json
+{
+  "error": "Validation failed",
+  "details": {
+    "email": "Invalid email format. Email must contain '@'."
+  },
+  "message": "Invalid email format. Email must contain '@'."
+}
+```
+
+---
+
+### B5. List All Contact Submissions
+```bash
+curl -i http://localhost:5000/api/contact
+```
+**Sample Response (HTTP 200):** Returns JSON array of all persisted contact submissions.
+
+---
+
+### B6. Catch-All 404 Route Test
+```bash
+curl -i http://localhost:5000/api/doesnotexist
+```
+**Sample Response (HTTP 404):**
+```json
+{
+  "error": "Route not found"
+}
+```
+
+---
+
+## 📬 Postman Collection
+
+An exported Postman Collection is available in `postman_collection.json` at the root of the repository. It includes pre-configured requests for all endpoints (B1 to B7), including success and validation error test cases.
+
+---
+
+## 📁 Repository Structure
+
+```
+portfolio-react/
+├── node_modules/
+├── public/
+│   └── images/projects/
+├── server/                    # Node.js/Express Backend (Modularized Architecture)
+│   ├── controllers/           # Business logic controllers
+│   │   ├── projectController.js # Project data fetching handlers
+│   │   └── contactController.js # Contact form validation & persistence handlers
+│   ├── routes/                # Express router definitions
+│   │   ├── projectRoutes.js   # GET / and GET /:id routes for projects
+│   │   └── contactRoutes.js   # POST / and GET / routes for contacts
+│   ├── data/
+│   │   ├── projects.json      # Server-side project data storage
+│   │   └── contacts.json      # Persisted contact form submissions
+│   ├── .env                   # Environment config (Port, CORS origin)
+│   ├── .env.example           # Template for environment variables
+│   ├── app.js                 # Express app initialization, middleware & router mounting
+│   ├── package.json           # Server dependencies & scripts
+│   └── server.js              # Server entry point & port listener
+├── src/                       # React Frontend
+│   ├── components/            # ProjectCard, ProjectList, ContactForm, Navbar, Layout, Footer
+│   ├── pages/                 # Home, About, Projects, ProjectDetail, Contact, NotFound
+│   ├── context/               # ThemeContext (Light/Dark mode)
+│   ├── data/                  # Static skills data
+│   └── styles/                # global.css
+├── postman_collection.json    # Exported Postman API collection
+├── package.json
+└── README.md
+```
+
+---
+
+## 🎨 Features & Functionality
+
+- **Modular Backend Architecture**: Clean separation into `server.js` (entry point), `app.js` (Express configuration), `routes/` (route declarations), and `controllers/` (business logic handlers).
+- **Live Data Fetching (`useEffect`)**: Projects page and Project Detail page fetch data dynamically from Express API (`/api/projects` and `/api/projects/:id`).
+- **Graceful Error Handling**: Visible loading states and user-friendly error banners when the server is unreachable or when requesting a non-existent project ID.
+- **Server-Side Validation**: Contact form validates required fields and email syntax on the server, surfacing error messages directly in the UI.
+- **Persistence**: Contact messages are saved to `server/data/contacts.json`.
+- **CORS & Environment Variables**: Configured via `dotenv` and `cors` middleware.
+- **Assignment 2 Features Retained**: React Router navigation, theme toggle (light/dark mode), responsive CSS layout, and 404 catch-all page remain intact.
