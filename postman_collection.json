@@ -82,7 +82,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"subject\": \"Inquiry\",\n  \"message\": \"I would like to discuss a project opportunity.\"\n}"
+          "raw": "{\n  \"name\": \"Sreeram Reddy\",\n  \"email\": \"sreeram@gmail.com\",\n  \"subject\": \"Inquiry\",\n  \"message\": \"I would like to discuss a project opportunity.\"\n}"
         },
         "url": {
           "raw": "http://localhost:5000/api/contact",
@@ -107,7 +107,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"invalid-email-no-at-symbol\",\n  \"message\": \"Hello\"\n}"
+          "raw": "{\n  \"name\": \"Sreeram Reddy\",\n  \"email\": \"invalid-email-no-at-symbol\",\n  \"message\": \"Hello\"\n}"
         },
         "url": {
           "raw": "http://localhost:5000/api/contact",
