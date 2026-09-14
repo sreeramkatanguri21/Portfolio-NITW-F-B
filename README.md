@@ -1,4 +1,4 @@
-# Sreeram Reddy Katanguri — Full Stack Portfolio (React + Node.js/Express)
+# Full Stack Portfolio (React + Node.js/Express)
 
 A full-stack portfolio website featuring a React frontend connected to a live Node.js/Express REST API backend. The backend serves project data, handles contact form submissions with validation, and stores submissions server-side in JSON storage using a modularized MVC directory structure (`app.js`, `routes/`, `controllers/`).
 
