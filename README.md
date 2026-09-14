@@ -130,8 +130,8 @@ curl -i -X POST http://localhost:5000/api/contact \
   "message": "Contact submission received successfully.",
   "submission": {
     "id": "1742045000000",
-    "name": "Alice Johnson",
-    "email": "alice@example.com",
+    "name": "Sreeram Reddy",
+    "email": "sreeram@gmail.com",
     "subject": "Job Offer",
     "message": "Hi Sreeram, let us connect!",
     "submittedAt": "2026-09-14T13:20:00.000Z"
