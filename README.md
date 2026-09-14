@@ -4,7 +4,7 @@ A full-stack portfolio website featuring a React frontend connected to a live No
 
 ---
 
-## 🚀 How to Run the Application
+## How to Run the Application
 
 The application consists of two parts: the Express backend server (`/server`) and the React frontend client.
 
@@ -26,7 +26,7 @@ The frontend will run on `http://localhost:5173`.
 
 ---
 
-## 🛠️ Environment Configuration
+## Environment Configuration
 
 The backend reads configuration from `server/.env`. A template is provided in `server/.env.example`:
 
@@ -40,7 +40,7 @@ ALLOWED_ORIGIN=http://localhost:5173
 
 ---
 
-## 📡 REST API Documentation
+## REST API Documentation
 
 Base URL: `http://localhost:5000`
 
@@ -57,7 +57,7 @@ Base URL: `http://localhost:5000`
 
 ---
 
-## 🧪 Testing Endpoints (curl Commands)
+## Testing Endpoints (curl Commands)
 
 ### B1. Health Check
 ```bash
@@ -179,13 +179,13 @@ curl -i http://localhost:5000/api/doesnotexist
 
 ---
 
-## 📬 Postman Collection
+## Postman Collection
 
 An exported Postman Collection is available in `postman_collection.json` at the root of the repository. It includes pre-configured requests for all endpoints (B1 to B7), including success and validation error test cases.
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 portfolio-react/
@@ -220,7 +220,7 @@ portfolio-react/
 
 ---
 
-## 🎨 Features & Functionality
+## Features & Functionality
 
 - **Modular Backend Architecture**: Clean separation into `server.js` (entry point), `app.js` (Express configuration), `routes/` (route declarations), and `controllers/` (business logic handlers).
 - **Live Data Fetching (`useEffect`)**: Projects page and Project Detail page fetch data dynamically from Express API (`/api/projects` and `/api/projects/:id`).
