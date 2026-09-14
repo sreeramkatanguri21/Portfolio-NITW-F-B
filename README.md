@@ -122,7 +122,7 @@ curl -i http://localhost:5000/api/projects/non-existent-id
 ```bash
 curl -i -X POST http://localhost:5000/api/contact \
   -H "Content-Type: application/json" \
-  -d '{"name": "Alice Johnson", "email": "alice@example.com", "subject": "Job Offer", "message": "Hi Sreeram, let us connect!"}'
+  -d '{"name": "Sreeram Reddy", "email": "sreeram@gmail.com", "subject": "Job Offer", "message": "Hi Sreeram, let us connect!"}'
 ```
 **Sample Response (HTTP 201):**
 ```json
@@ -143,7 +143,7 @@ curl -i -X POST http://localhost:5000/api/contact \
 ```bash
 curl -i -X POST http://localhost:5000/api/contact \
   -H "Content-Type: application/json" \
-  -d '{"name": "Alice Johnson", "email": "invalidemailformat", "message": "Hello"}'
+  -d '{"name": "Sreeram Reddy", "email": "invalidemailformat", "message": "Hello"}'
 ```
 **Sample Response (HTTP 400):**
 ```json
